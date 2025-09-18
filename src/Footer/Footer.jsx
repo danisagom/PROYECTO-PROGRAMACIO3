@@ -7,7 +7,7 @@ function Footer() {
         
         <nav>
           <a href="/about" className="text-white mx-2">Acerca de</a>
-          <a href="/contact" className="text-white mx-2">Contacto</a>
+          <a href="https://wa.me/3412106495" className="text-white mx-2">Contacto</a>
           <a href="/privacy" className="text-white mx-2">Política de privacidad</a>
         </nav>
       </div>
