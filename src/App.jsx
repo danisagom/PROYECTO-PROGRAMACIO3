@@ -1,23 +1,38 @@
 import { useState } from 'react'
-import './App.css'
+//import './App.css'
+import Header from './Header/Header.jsx';
+import Main from './Main/Main.jsx';
+import Footer from './Footer/Footer.jsx';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+
+
 import Dashboard from './components/dashboard/dashboard';
 import Login from './components/auth/login';
 import Profile from './components/profile/Profile';
-import Routines from './components/routines/Routines';
+import Routines from './components/Routines/routines';
 import NotFound from './components/ui/NotFound';
-import { BrowserRouter, Routes, Route } from "react-router-dom";
 
-function App() {
+
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+ function App() {
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/login" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/routines" element={<Routines />} />
-        <Route path="/profile" element={<Profile />} />
-        <Route path="*" element={<NotFound />} /> // lleva a NotFound si no coincide con ninguna ruta
-      </Routes>
-    </BrowserRouter>
+    
+      <BrowserRouter>
+      <div className="d-flex flex-column min-vh-100">
+        <Header />
+
+        <Main className="flex-fill">
+          <Routes>
+            <Route path="/login" element={<Login />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/routines" element={<Routines />} />
+            <Route path="/profile" element={<Profile />} />
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </Main>
+      <Footer />
+    </div></BrowserRouter>
   );
 }
 
