@@ -1,5 +1,6 @@
 import { useState } from 'react'
-//import './App.css'
+
+
 import Header from './Header/Header.jsx';
 import Main from './Main/Main.jsx';
 import Footer from './Footer/Footer.jsx';
@@ -8,9 +9,10 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 import Dashboard from './components/dashboard/dashboard';
-import Login from './components/auth/login';
+import Login from './components/auth/login/Login.jsx';
+import Register from './components/auth/register/Register.jsx';
 import Profile from './components/profile/Profile';
-import Routines from './components/Routines/routines';
+import Routines from './components/routines/Routines';
 import NotFound from './components/ui/NotFound';
 
 
@@ -22,15 +24,17 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
       <div className="d-flex flex-column min-vh-100">
         <Header />
 
-        <Main className="flex-fill">
+      
           <Routes>
+            <Route path="/" element={<Main/>} />
             <Route path="/login" element={<Login />} />
+            <Route path="Register" element={<Register/>}/>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/routines" element={<Routines />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </Main>
+       
       <Footer />
     </div></BrowserRouter>
   );
