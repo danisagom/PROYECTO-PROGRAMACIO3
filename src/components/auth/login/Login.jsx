@@ -1,20 +1,27 @@
 import React from "react";
 import { useState } from "react";
 import {Form, Button, Card} from "react-bootstrap"
-import { Link, Navigate } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
 
 
 const Login = () => {
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleLogin = (e) =>{
     e.preventDefault();
     
-    if(email === "test@test" && password === "1234"){
+    
+    const storedEmail = localStorage.getItem("userEmail");
+    const storedPassword = localStorage.getItem("userPassword");
+    
+    if(email === storedEmail && password === storedPassword){
+      localStorage.setItem("isLoggedIn", "true");
       alert("Logueado Correctamente");
-      Navigate("/")
+      // Recargar la página para actualizar el estado del Header
+      window.location.href = "/";
     } else{
       alert("Email o Contraseña incorrectos");
     }
