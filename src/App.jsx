@@ -1,42 +1,53 @@
-import { useState } from 'react'
-
-
-import Header from './Header/Header.jsx';
-import Main from './Main/Main.jsx';
-import Footer from './Footer/Footer.jsx';
-import 'bootstrap/dist/css/bootstrap.min.css';
-
-
-
-import Dashboard from './components/dashboard/dashboard';
-import Login from './components/auth/login/Login.jsx';
-import Register from './components/auth/register/Register.jsx';
-import Profile from './components/profile/Profile';
-import Routines from './components/routines/Routines';
-import NotFound from './components/ui/NotFound';
-
-
+import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
- function App() {
-  return (
-    
-      <BrowserRouter>
-      <div className="d-flex flex-column min-vh-100">
-        <Header />
+import "bootstrap/dist/css/bootstrap.min.css";
 
-      
+import Header from "./Header/Header.jsx";
+import Footer from "./Footer/Footer.jsx";
+import Main from "./Main/Main.jsx";
+import Dashboard from "./components/dashboard/Dashboard.jsx";
+
+
+import Login from "./components/auth/login/Login.jsx";
+import Register from "./components/auth/register/Register.jsx";
+import Profile from "./components/profile/Profile.jsx";
+import Routines from "./components/routines/Routines.jsx";
+import NotFound from "./components/ui/NotFound.jsx";
+
+import UserDashboard from "./components/roles/alumno/UserDashboard.jsx";
+import TrainerDashboard from "./components/roles/Profesores/TrainerDashboard.jsx";
+import AdminDashboard from "./components/roles/Administrativo/AdminDashboard.jsx";
+
+
+import { UserProvider } from "./context/UserContext.jsx";
+
+function App() {
+  return (
+    <UserProvider>
+      <BrowserRouter>
+        <div className="d-flex flex-column min-vh-100">
+          <Header />
+       
           <Routes>
-            <Route path="/" element={<Main/>} />
+            <Route path="/" element={<Main />} />
             <Route path="/login" element={<Login />} />
-            <Route path="Register" element={<Register/>}/>
+            <Route path="/register" element={<Register />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/routines" element={<Routines />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="*" element={<NotFound />} />
+
+            {/* Dashboards según rol */}
+           <Route path="/alumno/dashboard" element={<UserDashboard />} />
+           <Route path="/profesores/dashboard" element={<TrainerDashboard />} />
+           <Route path="/administrativo/dashboard" element={<AdminDashboard />} />
           </Routes>
-       
-      <Footer />
-    </div></BrowserRouter>
+        
+
+          <Footer />
+        </div>
+      </BrowserRouter>
+    </UserProvider>
   );
 }
 
