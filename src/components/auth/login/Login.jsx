@@ -1,34 +1,44 @@
-import React from "react";
-import { useState } from "react";
-import {Form, Button, Card} from "react-bootstrap"
-import { Link, useNavigate } from "react-router-dom"
-
+import React, { useState } from "react";
+import { Form, Button, Card } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
 
 const Login = () => {
-
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = (e) =>{
+  const handleLogin = (e) => {
     e.preventDefault();
-    
-    
-    const storedEmail = localStorage.getItem("userEmail");
-    const storedPassword = localStorage.getItem("userPassword");
-    
-    if(email === storedEmail && password === storedPassword){
-      localStorage.setItem("isLoggedIn", "true");
-      alert("Logueado Correctamente");
-      // Recargar la página para actualizar el estado del Header
-      window.location.href = "/";
-    } else{
-      alert("Email o Contraseña incorrectos");
+
+    // evitar espacios 
+    const cleanEmail = email.trim();
+
+    // Busqueda en local storege
+    const storedUser = localStorage.getItem(`user-${cleanEmail}`);
+    if (storedUser) {
+      const userObj = JSON.parse(storedUser);
+
+      // se Valida contraseña
+      if (userObj.password === password) {
+        alert(`Bienvenido ${userObj.role}`);
+
+        // se redirige segun rol
+        if (userObj.role === "user") {
+          navigate("/alumno/dashboard");
+        } else if (userObj.role === "trainer") {
+          navigate("/profesores/dashboard");
+        } else if (userObj.role === "admin") {
+          navigate("/administrativo/dashboard");
+        } else {
+          navigate("/dashboard"); // fallback
+        }
+      } else {
+        alert("Contraseña incorrecta");
+      }
+    } else {
+      alert("Usuario no registrado");
     }
   };
-
-
-  
 
   return (
     <div className="d-flex justify-content-center align-items-center mt-5">
@@ -42,6 +52,8 @@ const Login = () => {
               placeholder="Ingresá tu email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              autoComplete="off"
+              required
             />
           </Form.Group>
 
@@ -52,6 +64,8 @@ const Login = () => {
               placeholder="Ingresá tu contraseña"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              autoComplete="off"
+              required
             />
           </Form.Group>
 
@@ -67,7 +81,7 @@ const Login = () => {
         </div>
       </Card>
     </div>
-  )
-}
+  );
+};
 
 export default Login;
