@@ -1,7 +1,7 @@
-import React, { useContext, useState } from 'react';
-import { Card, Row, Col, Button } from 'react-bootstrap';
-import Routines from '../components/routines/Routines';
-import { Link } from 'react-router-dom';
+import React, { useContext, useState } from "react";
+import { Card, Row, Col, Button } from "react-bootstrap";
+import Routines from "../components/routines/Routines";
+import { Link } from "react-router-dom";
 import { UserContext } from "../context/UserContext.jsx";
 
 function Main() {
@@ -16,7 +16,7 @@ function Main() {
       // Agregar la rutina al array de rutinas del usuario en el contexto
       login({
         ...user,
-        routines: [...user.routines, rutina]
+        routines: [...user.routines, rutina],
       });
 
       alert(`Rutina "${rutina.name}" adquirida con éxito.`);
@@ -27,13 +27,15 @@ function Main() {
     <div className="container mt-4">
       <h1 className="mb-4 text-center">Rutinas</h1>
       <Row>
-        {Routines.map(rutina => (
+        {Routines.map((rutina) => (
           <Col key={rutina.id} md={4} className="mb-4">
             <Card>
               <Card.Body>
                 <Card.Img variant="top" src={rutina.img} />
                 <Card.Title>{rutina.name}</Card.Title>
-                <Card.Subtitle className="mb-2 text-muted">{rutina.days}</Card.Subtitle>
+                <Card.Subtitle className="mb-2 text-muted">
+                  {rutina.days}
+                </Card.Subtitle>
                 <Card.Text>{rutina.description}</Card.Text>
                 <Card.Text>Precio: {rutina.price}</Card.Text>
 
@@ -41,13 +43,15 @@ function Main() {
                   <Button
                     variant="success"
                     onClick={() => handleAdquireRoutine(rutina)}
-                    style={{ color: 'white', borderColor: 'black' }}
+                    style={{ color: "white", borderColor: "black" }}
                   >
                     Adquirir Rutina
                   </Button>
                 ) : (
                   <Link to="/login">
-                    <Button variant="secondary">Inicia sesión para adquirir</Button>
+                    <Button variant="secondary">
+                      Inicia sesión para adquirir
+                    </Button>
                   </Link>
                 )}
               </Card.Body>
