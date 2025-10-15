@@ -1,27 +1,42 @@
-import React from 'react'
-import { useState } from 'react'
-import { Button, Form, Card } from 'react-bootstrap'
-import { Link, useNavigate } from 'react-router-dom'
-
+import React, { useState, useEffect } from 'react';
+import { Button, Form, Card } from 'react-bootstrap';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Register = () => {
- const [email, setEmail] = useState("");
- const [password, setPassword] = useState("");
- const [confirmPassword, setConfirmPassword] = useState("");
- const navigate = useNavigate();
- const handleRegister = (e) => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [role, setRole] = useState("user");
+  const navigate = useNavigate();
+
+  // se limpia
+  useEffect(() => {
+    setEmail("");
+    setPassword("");
+    setConfirmPassword("");
+  }, []);
+
+  const handleRegister = (e) => {
     e.preventDefault();
-    
+
     if (password !== confirmPassword) {
-      alert("las contraseñas no son iguales");
+      alert("Las contraseñas no son iguales");
       return;
     }
-// por ahora guardamos en localstorage
-    localStorage.setItem("userEmail", email);
-    localStorage.setItem("userPassword", password);
-    alert("Registro exitoso  Ahora podés iniciar sesión");
-    navigate("/login"); // despues de registrarnos nos manda al login 
-};
+
+    // Guardado en local storage
+    const user = {
+      email,
+      password,
+      role
+    };
+
+    // Guarda usando email 
+    localStorage.setItem(`user-${email}`, JSON.stringify(user));
+
+    alert(`Registro exitoso como ${role}. Ahora podés iniciar sesión`);
+    navigate("/login");
+  };
 
   return (
     <div className="d-flex justify-content-center align-items-center mt-5">
@@ -35,6 +50,8 @@ const Register = () => {
               placeholder="Ingresá tu email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              autoComplete="off"
+              required
             />
           </Form.Group>
 
@@ -45,6 +62,8 @@ const Register = () => {
               placeholder="Ingresá tu contraseña"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              autoComplete="off"
+              required
             />
           </Form.Group>
 
@@ -55,7 +74,21 @@ const Register = () => {
               placeholder="Repetí tu contraseña"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
+              autoComplete="off"
+              required
             />
+          </Form.Group>
+
+          <Form.Group controlId="formRole" className="mb-3">
+            <Form.Label>Rol</Form.Label>
+            <Form.Select
+              value={role}
+              onChange={(e) => setRole(e.target.value)}
+            >
+              <option value="user">Alumno</option>
+              <option value="trainer">Entrenador</option>
+              <option value="admin">Administrador</option>
+            </Form.Select>
           </Form.Group>
 
           <Button variant="success" type="submit" className="w-100">
@@ -70,7 +103,7 @@ const Register = () => {
         </div>
       </Card>
     </div>
-  )
-}
+  );
+};
 
-export default Register
+export default Register;

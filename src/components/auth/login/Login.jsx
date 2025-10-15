@@ -1,27 +1,56 @@
-import React from "react";
-import { useState } from "react";
-import {Form, Button, Card} from "react-bootstrap"
-import { Link, Navigate } from "react-router-dom"
-
+import React, { useState, useContext } from "react"; // Importamos hooks necesarios
+import { Form, Button, Card } from "react-bootstrap";
+import { Link, useNavigate } from "react-router-dom";
+import { UserContext } from "../../../context/UserContext";
 
 const Login = () => {
-
+  // Estados locales para el formulario
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
+  const { setUser } = useContext(UserContext); // Obtenemos setUser del contexto global
 
-  const handleLogin = (e) =>{
+  const handleLogin = (e) => {
     e.preventDefault();
-    
-    if(email === "test@test" && password === "1234"){
-      alert("Logueado Correctamente");
-      Navigate("/")
-    } else{
-      alert("Email o Contraseña incorrectos");
+
+    // evitar espacios (comentario original)
+    const cleanEmail = email.trim();
+
+    // Busqueda en local storage (comentario original)
+    const storedUser = localStorage.getItem(`user-${cleanEmail}`);
+    console.log("Intentando login para:", cleanEmail);
+
+    if (storedUser) {
+      const userObj = JSON.parse(storedUser);
+
+      // se Valida contraseña (comentario original)
+      if (userObj.password === password) {
+        // Creamos objeto actualizado con estado de login
+        const updatedUser = {
+          ...userObj,
+          isLoggedIn: true,
+          routines: [],
+        };
+
+        // Actualizamos estado global y localStorage
+        setUser(updatedUser);
+        localStorage.setItem("currentUser", JSON.stringify(updatedUser));
+
+        // se redirige segun rol (comentario original)
+        if (userObj.role === "user") {
+          navigate("/alumno/dashboard");
+        } else if (userObj.role === "trainer") {
+          navigate("/profesores/dashboard");
+        } else if (userObj.role === "admin") {
+          navigate("/administrativo/dashboard");
+        }
+      } else {
+        alert("Contraseña incorrecta");
+      }
+    } else {
+      alert("Usuario no registrado");
     }
   };
-
-
-  
 
   return (
     <div className="d-flex justify-content-center align-items-center mt-5">
@@ -35,6 +64,8 @@ const Login = () => {
               placeholder="Ingresá tu email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+              autoComplete="off"
+              required
             />
           </Form.Group>
 
@@ -45,6 +76,8 @@ const Login = () => {
               placeholder="Ingresá tu contraseña"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              autoComplete="off"
+              required
             />
           </Form.Group>
 
@@ -60,7 +93,7 @@ const Login = () => {
         </div>
       </Card>
     </div>
-  )
-}
+  );
+};
 
 export default Login;
