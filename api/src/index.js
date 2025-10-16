@@ -1,9 +1,9 @@
 import express from "express";
 import routinesRoutes from "./routes/routines.routes.js";
 import { sequelize } from "./db.js";
-
+import { PORT } from "./config.js";
 const app = express();
-const PORT = 4000;
+
 
 
 app.use(express.json());
