@@ -1,5 +1,6 @@
 import express from "express";
 import routinesRoutes from "./routes/routines.routes.js";
+import userRoutes from "./routes/users.routes.js";
 import { sequelize } from "./db.js";
 import { PORT } from "./config.js";
 const app = express();
@@ -10,6 +11,7 @@ app.use(express.json());
 
 
 app.use("/routines", routinesRoutes);
+app.use("/users", userRoutes);
 
 async function main() {
   try {

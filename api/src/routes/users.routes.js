@@ -29,7 +29,7 @@ router.get("/:id", async (req, res) => {
     }
 });
 //eliminar usuario
-router.delete("/:id"), async (req, res) => {
+router.delete("/:id", async (req, res) => {
     const {id} = req.params;
     try{
         await Users.destroy({where: {id}})
@@ -37,7 +37,7 @@ router.delete("/:id"), async (req, res) => {
     } catch (error){
         res.status(500).json({error:error.message});
     }
-}
+});
 
 //actualizar usuario
 router.put("/:id", async (req, res) => {
@@ -67,3 +67,4 @@ router.post("/", async (req, res) => {
         res.status(500).json({ error: error.message });
     }
 });
+export default router;
