@@ -5,18 +5,18 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import Header from "./Header/Header.jsx";
 import Footer from "./Footer/Footer.jsx";
 import Main from "./Main/Main.jsx";
-import Dashboard from "./components/dashboard/Dashboard.jsx";
+import Dashboard from "./pages/dashboard/Dashboard.jsx";
 
 
 import Login from "./components/auth/login/Login.jsx";
 import Register from "./components/auth/register/Register.jsx";
-import Profile from "./components/profile/Profile.jsx";
-import Routines from "./components/routines/Routines.jsx";
+import Profile from "./pages/profile/Profile.jsx";
+import Routines from "./pages/routines/Routines.jsx";
 import NotFound from "./components/ui/NotFound.jsx";
 
-import UserDashboard from "./components/roles/alumno/UserDashboard.jsx";
-import TrainerDashboard from "./components/roles/Profesores/TrainerDashboard.jsx";
-import AdminDashboard from "./components/roles/Administrativo/AdminDashboard.jsx";
+import UserDashboard from "./pages/roles/alumno/UserDashboard.jsx";
+import TrainerDashboard from "./pages/roles/Profesores/TrainerDashboard.jsx";
+import AdminDashboard from "./pages/roles/Administrativo/AdminDashboard.jsx";
 
 
 import { UserProvider } from "./context/UserContext.jsx";

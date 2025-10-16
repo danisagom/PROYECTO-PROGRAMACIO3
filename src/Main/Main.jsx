@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import { Card, Row, Col, Button } from "react-bootstrap";
-import Routines from "../components/routines/Routines";
+import Routines from "../pages/routines/Routines";
 import { Link } from "react-router-dom";
 import { UserContext } from "../context/UserContext.jsx";
 
