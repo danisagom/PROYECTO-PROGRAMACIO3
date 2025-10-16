@@ -1,14 +1,15 @@
-import React, { useState, useContext } from "react"; // Importamos hooks necesarios
+import React, { useState, useContext } from "react"; 
 import { Form, Button, Card } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../../../context/UserContext";
-
+import ValidationsLogin from "../validationsLogin";
 const Login = () => {
   // Estados locales para el formulario
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+   const [errores, setErrores] = useState({}); // estado para errores
   const navigate = useNavigate();
-  const { setUser } = useContext(UserContext); // Obtenemos setUser del contexto global
+  const { setUser } = useContext(UserContext); 
 
   const handleLogin = (e) => {
     e.preventDefault();
@@ -16,27 +17,41 @@ const Login = () => {
     // evitar espacios (comentario original)
     const cleanEmail = email.trim();
 
-    // Busqueda en local storage (comentario original)
+   // Validaciones
+    const validationErrors = ValidationsLogin({ email: cleanEmail, password });
+    if (Object.keys(validationErrors).length > 0) {
+    alert(Object.values(validationErrors).join("\n"));
+    return;
+  }
+
+
+
+      setErrores({});
+
+
+
+
+    // Busqueda en local storage 
     const storedUser = localStorage.getItem(`user-${cleanEmail}`);
     console.log("Intentando login para:", cleanEmail);
 
     if (storedUser) {
       const userObj = JSON.parse(storedUser);
 
-      // se Valida contraseña (comentario original)
+      // Validacion
       if (userObj.password === password) {
-        // Creamos objeto actualizado con estado de login
+        // Crea objeto actualizado con estado de login
         const updatedUser = {
           ...userObj,
           isLoggedIn: true,
           routines: [],
         };
 
-        // Actualizamos estado global y localStorage
+        // Actualiza estado global y localStorage
         setUser(updatedUser);
         localStorage.setItem("currentUser", JSON.stringify(updatedUser));
 
-        // se redirige segun rol (comentario original)
+        // se redirige segun rol 
         if (userObj.role === "user") {
           navigate("/alumno/dashboard");
         } else if (userObj.role === "trainer") {
@@ -67,6 +82,7 @@ const Login = () => {
               autoComplete="off"
               required
             />
+            {errores.email && <p style={{ color: "red" }}>{errores.email}</p>}
           </Form.Group>
 
           <Form.Group controlId="formPassword" className="mb-3">
@@ -78,7 +94,8 @@ const Login = () => {
               onChange={(e) => setPassword(e.target.value)}
               autoComplete="off"
               required
-            />
+            />{errores.password && <p style={{ color: "red" }}>{errores.password}</p>}
+
           </Form.Group>
 
           <Button variant="primary" type="submit" className="w-100">

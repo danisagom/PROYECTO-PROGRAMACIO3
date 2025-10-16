@@ -1,37 +1,31 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button, Form, Card } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
+import ValidationsLogin from "../validationsLogin.jsx";
+
 
 const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [role, setRole] = useState("user");
+  const [errores, setErrores] = useState({});
   const navigate = useNavigate();
-
-  // se limpia
-  useEffect(() => {
-    setEmail("");
-    setPassword("");
-    setConfirmPassword("");
-  }, []);
 
   const handleRegister = (e) => {
     e.preventDefault();
 
-    if (password !== confirmPassword) {
-      alert("Las contraseñas no son iguales");
+    // Llama a la función de validación pasando confirmPassword
+    const validationErrors = ValidationsLogin({ email, password, confirmPassword });
+    if (Object.keys(validationErrors).length > 0) {
+      setErrores(validationErrors); 
       return;
     }
 
-    // Guardado en local storage
-    const user = {
-      email,
-      password,
-      role
-    };
+    setErrores({}); //  limpia errores
 
-    // Guarda usando email 
+    // Guardado en localStorage
+    const user = { email, password, role };
     localStorage.setItem(`user-${email}`, JSON.stringify(user));
 
     alert(`Registro exitoso como ${role}. Ahora podés iniciar sesión`);
@@ -53,6 +47,7 @@ const Register = () => {
               autoComplete="off"
               required
             />
+            {errores.email && <p style={{ color: "red" }}>{errores.email}</p>}
           </Form.Group>
 
           <Form.Group controlId="formPassword" className="mb-3">
@@ -65,6 +60,7 @@ const Register = () => {
               autoComplete="off"
               required
             />
+            {errores.password && <p style={{ color: "red" }}>{errores.password}</p>}
           </Form.Group>
 
           <Form.Group controlId="formConfirmPassword" className="mb-3">
@@ -77,6 +73,7 @@ const Register = () => {
               autoComplete="off"
               required
             />
+            {errores.confirmPassword && <p style={{ color: "red" }}>{errores.confirmPassword}</p>}
           </Form.Group>
 
           <Form.Group controlId="formRole" className="mb-3">
