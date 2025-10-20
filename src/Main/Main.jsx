@@ -1,49 +1,62 @@
-import React, { useContext, useState } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import { Card, Row, Col, Button } from "react-bootstrap";
-import Routines from "../pages/routines/Routines";
 import { Link } from "react-router-dom";
 import { UserContext } from "../context/UserContext.jsx";
 
 function Main() {
-  const [users, setUsers] = useState([]); // inicializar como []
+  const [routines, setRoutines] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  const { user, login } = useContext(UserContext); // asumir que UserContext tiene user y login
+  const { user, login } = useContext(UserContext);
+
+  useEffect(() => {
+    fetch("http://localhost:4000/routines")
+      .then(res => res.json())
+      .then(data => {
+        setRoutines(data);
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error(err);
+        setError("No se pudieron cargar las rutinas");
+        setLoading(false);
+      });
+  }, []);
 
   const handleAdquireRoutine = (rutina) => {
     if (!user?.isLoggedIn) {
       alert("Por favor, inicia sesión para adquirir una rutina.");
     } else {
-      // Agregar la rutina al array de rutinas del usuario en el contexto
       login({
         ...user,
         routines: [...user.routines, rutina],
       });
-
-      alert(`Rutina "${rutina.name}" adquirida con éxito.`);
+      alert(`Rutina "${rutina.nombre}" adquirida con éxito.`);
     }
   };
+
+  if (loading) return <p>Cargando rutinas...</p>;
+  if (error) return <p>{error}</p>;
 
   return (
     <div className="container mt-4">
       <h1 className="mb-4 text-center">Rutinas</h1>
       <Row>
-        {Routines.map((rutina) => (
-          <Col key={rutina.id} md={4} className="mb-4">
+        {routines.map(r => (
+          <Col key={r.id} md={4} className="mb-4">
             <Card>
+              {r.img && <Card.Img variant="top" src={r.img} />}
               <Card.Body>
-                <Card.Img variant="top" src={rutina.img} />
-                <Card.Title>{rutina.name}</Card.Title>
-                <Card.Subtitle className="mb-2 text-muted">
-                  {rutina.days}
-                </Card.Subtitle>
-                <Card.Text>{rutina.description}</Card.Text>
-                <Card.Text>Precio: {rutina.price}</Card.Text>
+                <Card.Title>{r.nombre}</Card.Title>
+                <Card.Text>{r.descripcion}</Card.Text>
+                <small>Duración: {r.duracion} min - Nivel: {r.nivel}</small>
+                <p>Ejercicios: {r.ejercicios}</p>
 
                 {user?.isLoggedIn ? (
                   <Button
                     variant="success"
-                    onClick={() => handleAdquireRoutine(rutina)}
-                    style={{ color: "white", borderColor: "black" }}
+                    onClick={() => handleAdquireRoutine(r)}
                   >
                     Adquirir Rutina
                   </Button>

@@ -11,7 +11,6 @@ import Dashboard from "./pages/dashboard/Dashboard.jsx";
 import Login from "./components/auth/login/Login.jsx";
 import Register from "./components/auth/register/Register.jsx";
 import Profile from "./pages/profile/Profile.jsx";
-import Routines from "./pages/routines/Routines.jsx";
 import NotFound from "./components/ui/NotFound.jsx";
 
 import UserDashboard from "./pages/roles/alumno/UserDashboard.jsx";
@@ -33,7 +32,6 @@ function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/register" element={<Register />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/routines" element={<Routines />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="*" element={<NotFound />} />
 
