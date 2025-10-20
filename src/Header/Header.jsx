@@ -53,16 +53,19 @@ function Header() {
             </Link>
           </>
         ) : (
+          <>
           <Button variant="danger" onClick={handleLogout}>
             Cerrar Sesión
           </Button>
+          <Link to="/new-routine">
+            <Button variant="warning" className="ms-2">
+            Agregar Rutina
+            </Button>
+          </Link>
+        </>
         )}
-         {/* Botón para agregar rutina */}
-      <Link to="/new-routine">
-        <Button variant="success" className="me-2">
-          Agregar Rutina
-        </Button>
-      </Link>
+         
+        
       </div>
     </div>
   );
