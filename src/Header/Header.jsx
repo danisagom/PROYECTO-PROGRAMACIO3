@@ -5,6 +5,7 @@ import { Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
 
+
 function Header() {
   const { user, setUser } = useContext(UserContext);
 
@@ -56,6 +57,12 @@ function Header() {
             Cerrar Sesión
           </Button>
         )}
+         {/* Botón para agregar rutina */}
+      <Link to="/new-routine">
+        <Button variant="success" className="me-2">
+          Agregar Rutina
+        </Button>
+      </Link>
       </div>
     </div>
   );

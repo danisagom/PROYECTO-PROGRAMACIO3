@@ -35,6 +35,25 @@ function Main() {
       alert(`Rutina "${rutina.nombre}" adquirida con éxito.`);
     }
   };
+  const handleDeleteRoutine = async (id) => {
+  if (!confirm("¿Seguro que querés eliminar esta rutina?")) return;
+
+  try {
+    const res = await fetch(`http://localhost:4000/routines/${id}`, {
+      method: "DELETE",
+    });
+
+    if (res.status === 204) {
+      // Si se eliminó correctamente, actualizamos el estado en el front
+      setRoutines(prev => prev.filter(r => r.id !== id));
+    } else {
+      alert("No se pudo eliminar la rutina");
+    }
+  } catch (error) {
+    console.error(error);
+    alert("Error al eliminar la rutina");
+  }
+};
 
   if (loading) return <p>Cargando rutinas...</p>;
   if (error) return <p>{error}</p>;
@@ -66,6 +85,15 @@ function Main() {
                       Inicia sesión para adquirir
                     </Button>
                   </Link>
+                )}
+                {user?.isLoggedIn && (
+                <Button
+                  variant="danger"
+                  className="mt-2"
+                  onClick={() => handleDeleteRoutine(r.id)}
+                >
+                  Eliminar
+                </Button>
                 )}
               </Card.Body>
             </Card>
