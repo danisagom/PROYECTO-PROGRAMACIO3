@@ -10,7 +10,7 @@ import Dashboard from "./pages/dashboard/Dashboard.jsx";
 
 import Login from "./components/auth/login/Login.jsx";
 import Register from "./components/auth/register/Register.jsx";
-import Profile from "./pages/profile/Profile.jsx";
+import Profile from "./profile/Profile.jsx";
 import NewRoutine from "./pages/newRoutine/NewRoutine.jsx";
 import NotFound from "./components/ui/NotFound.jsx";
 

@@ -1,10 +1,12 @@
 import Routines from "../model/Routines.js";
+
 export const getAllRoutines = async (req, res) => {
   try {
     const routines = await Routines.findAll();
-    res.json(routines);
+    const result = Array.isArray(routines) ? routines : [];
+    return res.status(200).json(result);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.status(500).json([]);
   }
 };
 export const getRoutineById = async (req, res) => {
@@ -25,25 +27,22 @@ export const deleteRoutine = async (req, res) => {
     const { id } = req.params;
     await Routines.destroy({ where: { id } });
     res.status(204).send();
-  } catch {
-    res.status(500).json({ error: error.message });
-  }
-};
-export const putRoutine = async (req, res) => {
-  try {
-    const { id } = req.params;
-    rutina = await Routines.update(
-      { nombre, descripcion, duracion, nivel, ejercicios },
-      { where: { id } }
-    );
-    res.status(204).send();
-  } catch {
+  } catch (error) {
     res.status(500).json({ error: error.message });
   }
 };
 export const postRoutine = async (req, res) => {
   try {
-    rutina = await Routines.create({
+    const { nombre, descripcion, duracion, nivel, ejercicios } = req.body;
+
+    // Validaciones básicas
+    if (!nombre || !descripcion) {
+      return res
+        .status(400)
+        .json({ error: "Nombre y descripción son requeridos" });
+    }
+
+    const rutina = await Routines.create({
       nombre,
       descripcion,
       duracion,
@@ -51,6 +50,25 @@ export const postRoutine = async (req, res) => {
       ejercicios,
     });
     res.status(201).json(rutina);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+export const putRoutine = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { nombre, descripcion, duracion, nivel, ejercicios } = req.body;
+
+    const [updatedRows] = await Routines.update(
+      { nombre, descripcion, duracion, nivel, ejercicios },
+      { where: { id } }
+    );
+
+    if (updatedRows > 0) {
+      res.status(200).json({ message: "Rutina actualizada correctamente" });
+    } else {
+      res.status(404).json({ error: "Rutina no encontrada" });
+    }
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

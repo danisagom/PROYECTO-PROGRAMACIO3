@@ -11,15 +11,22 @@ function Main() {
   const { user, login } = useContext(UserContext);
 
   useEffect(() => {
-    fetch("http://localhost:4000/routines")
-      .then(res => res.json())
+    fetch("http://localhost:4000/routines/public")
+      .then(res => {
+        if (!res.ok) {
+          throw new Error(`HTTP error! status: ${res.status}`);
+        }
+        return res.json();
+      })
       .then(data => {
-        setRoutines(data);
+        const routinesArray = Array.isArray(data) ? data : [];
+        setRoutines(routinesArray);
         setLoading(false);
       })
       .catch(err => {
         console.error(err);
         setError("No se pudieron cargar las rutinas");
+        setRoutines([]);
         setLoading(false);
       });
   }, []);
@@ -62,7 +69,7 @@ function Main() {
     <div className="container mt-4">
       <h1 className="mb-4 text-center">Rutinas</h1>
       <Row>
-        {routines.map(r => (
+        {Array.isArray(routines) && routines.map(r => (
           <Col key={r.id} md={4} className="mb-4">
             <Card>
               {r.img && <Card.Img variant="top" src={r.img} />}
