@@ -11,6 +11,10 @@ import { verifyToken } from "../middlewares/verifyToken.js";
 import { checkRole } from "../middlewares/checkRole.js";
 
 const router = express.Router();
+
+
+router.get("/public", getAllRoutines);
+
 //todas las rutinas
 router.get(
   "/",
@@ -30,6 +34,6 @@ router.delete("/:id", verifyToken, checkRole(["admin"]), deleteRoutine);
 //actualizar rutina
 router.put("/:id", verifyToken, checkRole(["admin", "trainer"]), putRoutine);
 //nueva rutina
-router.post("/", verifyToken, checkRole(["admin", "trainer"]), postRoutine);
+router.post("/", verifyToken, checkRole(["admin", "trainer", "Profesores"]), postRoutine);
 
 export default router;

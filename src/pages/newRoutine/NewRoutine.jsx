@@ -3,10 +3,6 @@ import { Button, Card, Col, Form, Row } from "react-bootstrap";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-
-
-
-
 const NewRoutine = ({ onRoutineAdded }) => {
   const [nombre, setNombre] = useState("");
   const [descripcion, setDescripcion] = useState("");
@@ -30,11 +26,16 @@ const NewRoutine = ({ onRoutineAdded }) => {
     };
 
     try {
-      const res = await fetch("http://localhost:4000/routines", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(routineData),
-      });
+    const token = localStorage.getItem('token');
+
+    const res = await fetch("http://localhost:4000/routines", {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}` // DENTRO de headers
+      },
+      body: JSON.stringify(routineData)
+    });
 
     if (!res.ok) throw new Error("Error al agregar rutina");
       const data = await res.json();
