@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHouse, faDumbbell } from "@fortawesome/free-solid-svg-icons";
+import { faHouse, faDumbbell, faUser } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
@@ -37,15 +37,15 @@ function Header() {
         Gimnasio Active Energy
       </h1>
       <p>
-        Tu gimnasio Personal en casa,a tu ritmo ,con nuestras rutinas personales
+        Tu gimnasio Personal en casa, a tu ritmo, con nuestras rutinas personales
       </p>
 
-      <div>
+      <div className="d-flex justify-content-center align-items-center gap-2 flex-wrap">
         {!user?.isLoggedIn ? (
           <>
             <Link to="/login">
               <Button variant="primary" className="me-2">
-                Iniciar Sesion
+                Iniciar Sesión
               </Button>
             </Link>
 
@@ -54,9 +54,43 @@ function Header() {
             </Link>
           </>
         ) : (
-          <Button variant="danger" onClick={handleLogout}>
-            Cerrar Sesión
-          </Button>
+          <>
+            {/* Ícono de perfil del usuario */}
+            <Link to="/profile">
+              <Button 
+                variant="outline-light" 
+                className="me-2"
+                style={{ 
+                  borderRadius: "50%", 
+                  width: "45px", 
+                  height: "45px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center"
+                }}
+                title={`Perfil de ${user.email}`}
+              >
+                <FontAwesomeIcon icon={faUser} />
+              </Button>
+            </Link>
+
+            {/* Información del usuario */}
+            <span className="me-3 text-light">
+              Bienvenido, <strong>{user.email}</strong>
+            </span>
+
+            {/* Botón para agregar rutina */}
+            <Link to="/new-routine">
+              <Button variant="success" className="me-2">
+                Agregar Rutina
+              </Button>
+            </Link>
+
+            {/* Botón de cerrar sesión */}
+            <Button variant="danger" onClick={handleLogout}>
+              Cerrar Sesión
+            </Button>
+          </>
         )}
       </div>
     </div>
