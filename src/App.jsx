@@ -7,7 +7,7 @@ import Footer from "./Footer/Footer.jsx";
 import Main from "./Main/Main.jsx";
 import Dashboard from "./pages/dashboard/Dashboard.jsx";
 import About from './Footer/About.jsx';
-
+import Routines from "./pages/routines/Routines.jsx";
 import Login from "./components/auth/login/Login.jsx";
 import Register from "./components/auth/register/Register.jsx";
 import Profile from "./Profile/Profile.jsx";
