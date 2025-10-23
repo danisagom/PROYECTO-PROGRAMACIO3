@@ -6,7 +6,7 @@ const Routines = [
     name: "Full body",
     days: "lunes, miercoles y viernes",
     description: "Rutina para trabajar todo el cuerpo en una sola sesión de musculacion.",
-    price: "$50000",
+    price: 50000,
     img: "https://i.ytimg.com/vi/uk5kyKbxLzs/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLClF2-PLTJpMK6hUOnzGQRyhNV3rw"
 },
 {
@@ -14,7 +14,7 @@ const Routines = [
     name: "Upper body",
     days: "martes y jueves",
     description: "Rutina para trabajar la parte superior del cuerpo en musculacion.",
-    price: "$40000",
+    price: 40000,
     img: "https://i.ytimg.com/vi/MEzs04MfZMc/hq720.jpg?sqp=-oaymwEhCK4FEIIDSFryq4qpAxMIARUAAAAAGAElAADIQj0AgKJD&rs=AOn4CLAJkzSE1RTGnEuHusApuqPPTN5Hjw"
 },
 {
@@ -22,7 +22,7 @@ const Routines = [
     name: "Lower body",
     days: "lunes, miercoles y viernes",
     description: "Rutina para trabajar la parte inferior del cuerpo en musculacion.",
-    price: "$40000",
+    price: 40000,
     img: "https://builtwithscience.com/wp-content/uploads/2018/04/lower-body-workout-legs-workout-thumbnail.png"
 },
 {
@@ -30,7 +30,7 @@ const Routines = [
     name: "Yoga",
     days: "martes y jueves",
     description: "Rutina para trabajar la flexibilidad y el equilibrio.",
-    price: "$30000",
+    price: 30000,
     img: "https://a.storyblok.com/f/97382/2000x1500/4c15e1224b/cover-benefits-of-yoga-and-meditation.png"
 },
 {
@@ -38,7 +38,7 @@ const Routines = [
     name: "Funcional",
     days: "lunes, miercoles y viernes",
     description: "Rutina para trabajar la fuerza y la resistencia de manera integral.",
-    price: "$45000",
+    price: 45000,
     img: "https://www.sanitas.es/media/cen/imagen/grande/img_noticia-entrenamiento-funcional/img-entrenamiento-funcional.jpg"
 },
 {
@@ -46,7 +46,7 @@ const Routines = [
     name: "Pilates",
     days: "martes y jueves",
     description: "Rutina para trabajar la fuerza y la flexibilidad a través de movimientos controlados.",
-    price: "$35000",
+    price: 35000,
     img: "https://www.nalandaglobal.com/wp-content/uploads/mejorar-la-postura-con-pilates.png"
 }
 ]
