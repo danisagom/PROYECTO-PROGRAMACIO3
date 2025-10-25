@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { use, useEffect } from 'react'
 import { Button, Card, Col, Form, Row } from "react-bootstrap";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -10,6 +10,23 @@ const NewRoutine = ({ onRoutineAdded }) => {
   const [nivel, setNivel] = useState("");
   const [ejercicios, setEjercicios] = useState("");
   const [img, setImg] = useState("");
+  const [selectedUser, setSelectedUser] = useState("");
+  const [users, setUsers] = useState([]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      const token = localStorage.getItem("token");
+      const res = await fetch("http://localhost:4000/users", {
+        headers: {
+          "Authorization": `Bearer ${token}`
+        }
+      });
+      const data = await res.json();
+      setUsers(data);
+    };
+
+    fetchUsers();
+  }, []);
 
   const navigate = useNavigate();
 
