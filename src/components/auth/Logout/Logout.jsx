@@ -1,15 +1,20 @@
-import React from "react";
+import React, { useContext } from "react";
 import { Button } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
+import { UserContext } from "../../../context/UserContext";
 
 const Logout = () => {
   const navigate = useNavigate();
+  const { setUser } = useContext(UserContext);
 
   const handleLogout = () => {
-    // Solo borramos el estado de sesión, NO las credenciales registradas
-    localStorage.removeItem("isLoggedIn");
-    // Mantenemos userEmail y userPassword para futuras sesiones
-    
+    // Limpiar el token y datos del usuario
+    localStorage.removeItem("token");
+    localStorage.removeItem("currentUser");
+
+    // Limpiar el contexto del usuario
+    setUser(null);
+
     alert("Sesión cerrada correctamente");
     navigate("/"); // Redirigir a la página principal
   };

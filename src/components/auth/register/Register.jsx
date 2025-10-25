@@ -12,7 +12,7 @@ const Register = () => {
   const [errores, setErrores] = useState({});
   const navigate = useNavigate();
 
-  const handleRegister = (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
 
     // Llama a la función de validación pasando confirmPassword
@@ -24,12 +24,26 @@ const Register = () => {
 
     setErrores({}); //  limpia errores
 
-    // Guardado en localStorage
-    const user = { email, password, role };
-    localStorage.setItem(`user-${email}`, JSON.stringify(user));
+    try {
+      const response = await fetch("http://localhost:4000/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password, role }),
+      });
 
-    alert(`Registro exitoso como ${role}. Ahora podés iniciar sesión`);
-    navigate("/login");
+      if (response.ok) {
+        alert(`Registro exitoso como ${role}. Ahora podés iniciar sesión`);
+        navigate("/login");
+      } else {
+        const errorData = await response.json();
+        alert(errorData.message || "Error en el registro");
+      }
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Error de conexión al servidor");
+    }
   };
 
   return (

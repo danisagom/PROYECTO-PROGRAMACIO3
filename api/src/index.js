@@ -9,11 +9,16 @@ const app = express();
 
 
 app.use(express.json());
-app.use(cors(
-));
+import authRoutes from "./routes/auth.routes.js";
+
+app.use(cors({
+  origin: ['http://localhost:5173', 'http://localhost:5174'],
+  credentials: true,
+}));
 
 app.use("/routines", routinesRoutes);
 app.use("/users", userRoutes);
+app.use("/auth", authRoutes);
 
 async function main() {
   try {

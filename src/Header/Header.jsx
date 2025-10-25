@@ -77,7 +77,7 @@ function Header() {
               Bienvenido, <strong>{user.email}</strong>
             </span>
 
-            {(user.role === "admin" || user.role === "trainer") && (
+            {(user.role === "trainer") && (
               <Link to= "/new-routine">
                 <Button variant="warning" className="me-2">
                   Asignar Rutina

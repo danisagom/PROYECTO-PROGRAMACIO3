@@ -11,7 +11,7 @@ const Login = () => {
   const navigate = useNavigate();
   const { setUser } = useContext(UserContext); 
 
-  const handleLogin = (e) => {
+  const handleLogin = async (e) => {
     e.preventDefault();
 
     // evitar espacios (comentario original)
@@ -20,50 +20,51 @@ const Login = () => {
    // Validaciones
     const validationErrors = ValidationsLogin({ email: cleanEmail, password });
     if (Object.keys(validationErrors).length > 0) {
-    alert(Object.values(validationErrors).join("\n"));
-    return;
-  }
+      alert(Object.values(validationErrors).join("\n"));
+      return;
+    }
 
+    setErrores({});
 
+    try {
+      const response = await fetch("http://localhost:4000/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email: cleanEmail, password }),
+      });
 
-      setErrores({});
-
-
-
-
-    // Busqueda en local storage 
-    const storedUser = localStorage.getItem(`user-${cleanEmail}`);
-    console.log("Intentando login para:", cleanEmail);
-
-    if (storedUser) {
-      const userObj = JSON.parse(storedUser);
-
-      // Validacion
-      if (userObj.password === password) {
-        // Crea objeto actualizado con estado de login
-        const updatedUser = {
-          ...userObj,
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem("token", data.token);
+        
+        // Crear objeto de usuario con el role del backend
+        const userObj = {
+          email: cleanEmail,
+          role: data.role,
           isLoggedIn: true,
           routines: [],
         };
 
-        // Actualiza estado global y localStorage
-        setUser(updatedUser);
-        localStorage.setItem("currentUser", JSON.stringify(updatedUser));
+        setUser(userObj);
+        localStorage.setItem("currentUser", JSON.stringify(userObj));
 
-        // se redirige segun rol 
-        if (userObj.role === "user") {
+        // Redirigir según el role
+        if (data.role === "user") {
           navigate("/alumno/dashboard");
-        } else if (userObj.role === "trainer") {
+        } else if (data.role === "trainer") {
           navigate("/profesores/dashboard");
-        } else if (userObj.role === "admin") {
+        } else if (data.role === "admin") {
           navigate("/administrativo/dashboard");
         }
       } else {
-        alert("Contraseña incorrecta");
+        const errorData = await response.json();
+        alert(errorData.message || "Error en el login");
       }
-    } else {
-      alert("Usuario no registrado");
+    } catch (error) {
+      console.error("Error:", error);
+      alert("Error de conexión al servidor");
     }
   };
 
