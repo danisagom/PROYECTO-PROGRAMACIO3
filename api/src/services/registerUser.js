@@ -2,21 +2,32 @@ import bcrypt from "bcryptjs";
 import Users from "../models/Users.js";
 
 export const registerUser = async (req, res) => {
-  const { email, password, role } = req.body;
+  try {
+    const { email, password, role } = req.body;
 
-  const user = await Users.findOne({
-    where: { email },
-  });
-  if (user) return res.status(400).send({ message: "usuario existente" });
+    // Verificar si el usuario ya existe
+    const existingUser = await Users.findOne({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({ message: "El usuario ya existe" });
+    }
 
-  const saltRounds = 10;
-  const salt = await bcrypt.genSalt(saltRounds);
-  const hashedPassword = await bcrypt.hash(password, salt);
+    // Hashear la contraseña
+    const saltRounds = 10;
+    const hashedPassword = await bcrypt.hash(password, saltRounds);
 
-  const newUser = await Users.create({
-    email,
-    role,
-    password: hashedPassword,
-  });
-  res.json(newUser.id);
+    // Crear el usuario
+    const newUser = await Users.create({
+      email,
+      password: hashedPassword,
+      role: role || "user",
+    });
+
+    res.status(201).json({
+      message: "Usuario registrado exitosamente",
+      userId: newUser.id,
+    });
+  } catch (error) {
+    console.error("Error en registro:", error);
+    res.status(500).json({ message: "Error interno del servidor" });
+  }
 };

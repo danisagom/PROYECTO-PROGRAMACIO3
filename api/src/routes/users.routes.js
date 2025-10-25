@@ -1,5 +1,5 @@
 import express from "express";
-import { Users } from "../model/Users.js";
+import Users from "../models/Users.js";
 import { verifyToken } from "../middlewares/verifyToken.js";
 import { checkRole } from "../middlewares/checkRole.js";
 

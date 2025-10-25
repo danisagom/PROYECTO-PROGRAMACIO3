@@ -1,3 +1,4 @@
+
 import React, { useContext } from "react";
 import { Card, Row, Col, Button } from "react-bootstrap";
 import Routines from "../../routines/Routines";
@@ -9,6 +10,21 @@ import { FaShoppingCart } from "react-icons/fa";
 const UserDashboard = () => {
   const { user } = useContext(UserContext);
   const { cart, addToCart, clearCart } = useContext(CartContext);
+
+import React, { useContext } from 'react'
+import { UserContext } from '../../../context/UserContext';
+import { Container } from 'react-bootstrap';
+
+const UserDashboard = () => {
+  const {user} = useContext(UserContext); 
+  return (
+    <Container className="text-center py-4">
+      <p>Hola {user ? user.email : "Alumno"} pidele a tu entrenador que te agregue rutinas!</p>
+    </Container>
+
+  )
+};
+
 
   const handleAdquireRoutine = (rutina) => {
     addToCart(rutina);
