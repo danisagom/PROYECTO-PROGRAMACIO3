@@ -25,20 +25,66 @@ export const getRoutineById = async (req, res) => {
 
 export const postRoutine = async (req, res) => {
   try {
+    console.log("📝 POST /routines - Datos recibidos:", req.body);
+    console.log("👤 Usuario que hace la request:", req.user);
+
     const { nombre, descripcion, duracion, nivel, ejercicios, img } = req.body;
+
+    // Validaciones básicas
+    if (!nombre || !nombre.trim()) {
+      return res.status(400).json({ 
+        error: "El nombre de la rutina es obligatorio" 
+      });
+    }
+
+    if (!nivel) {
+      return res.status(400).json({ 
+        error: "El nivel es obligatorio" 
+      });
+    }
+
+    // Validar niveles permitidos
+    const nivelesPermitidos = ['principiante', 'intermedio', 'avanzado'];
+    if (!nivelesPermitidos.includes(nivel)) {
+      return res.status(400).json({ 
+        error: "Nivel debe ser: principiante, intermedio o avanzado" 
+      });
+    }
+
+    // Crear la rutina
     const newRoutine = await Routines.create({
-      nombre,
-      descripcion,
-      duracion,
-      nivel,
-      ejercicios,
-      img,
+      nombre: nombre.trim(),
+      descripcion: descripcion ? descripcion.trim() : null,
+      duracion: duracion ? parseInt(duracion) : null,
+      nivel: nivel,
+      ejercicios: ejercicios ? ejercicios.trim() : null,
+      img: img ? img.trim() : null,
     });
+
+    console.log("✅ Rutina creada exitosamente");
+
     res.status(201).json(newRoutine);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("❌ ERROR en postRoutine:", error);
+
+    // Manejar errores de Sequelize
+    if (error.name === 'SequelizeValidationError') {
+      const errors = error.errors.map(function(err) { 
+        return err.message; 
+      });
+      return res.status(400).json({ error: errors.join(', ') });
+    }
+
+    if (error.name === 'SequelizeUniqueConstraintError') {
+      return res.status(400).json({ error: "Ya existe una rutina con ese nombre" });
+    }
+
+    res.status(500).json({ 
+      error: "Error interno del servidor",
+      details: error.message 
+    });
   }
-};
+}
 
 export const putRoutine = async (req, res) => {
   try {
