@@ -1,165 +1,223 @@
-import React, { use, useEffect } from 'react'
-import { Button, Card, Col, Form, Row } from "react-bootstrap";
-import { useState } from "react";
+import React, { useState } from 'react';
+import { Button, Card, Col, Form, Row, Alert, Spinner } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 
-const NewRoutine = ({ onRoutineAdded }) => {
-  const [nombre, setNombre] = useState("");
-  const [descripcion, setDescripcion] = useState("");
-  const [duracion, setDuracion] = useState("");
-  const [nivel, setNivel] = useState("");
-  const [ejercicios, setEjercicios] = useState("");
-  const [img, setImg] = useState("");
-  const [selectedUser, setSelectedUser] = useState("");
-  const [users, setUsers] = useState([]);
-
-  useEffect(() => {
-    const fetchUsers = async () => {
-      const token = localStorage.getItem("token");
-      const res = await fetch("http://localhost:4000/users", {
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
-      });
-      const data = await res.json();
-      setUsers(data);
-    };
-
-    fetchUsers();
-  }, []);
+const NewRoutine = () => {
+  const [formData, setFormData] = useState({
+    nombre: "",
+    descripcion: "",
+    duracion: "",
+    nivel: "",
+    ejercicios: "",
+    img: ""
+  });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const navigate = useNavigate();
 
-    const handleAddRoutine = async (event) => {
-        event.preventDefault();
+  const handleChange = function(e) {
+    const { name, value } = e.target;
+    setFormData(function(prev) {
+      return {
+        ...prev,
+        [name]: value
+      };
+    });
+  };
 
-    const routineData = {
-      nombre,
-      descripcion,
-      duracion: duracion ? parseInt(duracion, 10) : null,
-      nivel,
-      ejercicios,
-      img
-    };
+  const handleAddRoutine = async function(event) {
+    event.preventDefault();
+    setLoading(true);
+    setError("");
+    setSuccess("");
 
     try {
-    const token = localStorage.getItem('token');
+      const token = localStorage.getItem('token');
+      if (!token) {
+        setError("No hay token de autenticación");
+        setLoading(false);
+        return;
+      }
 
-    const res = await fetch("http://localhost:4000/routines", {
-      method: "POST",
-      headers: { 
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${token}` // DENTRO de headers
-      },
-      body: JSON.stringify(routineData)
-    });
+      // Datos básicos para prueba
+      const routineData = {
+        nombre: formData.nombre,
+        descripcion: formData.descripcion,
+        duracion: formData.duracion ? parseInt(formData.duracion) : null,
+        nivel: formData.nivel,
+        ejercicios: formData.ejercicios,
+        img: formData.img
+      };
 
-    if (!res.ok) throw new Error("Error al agregar rutina");
-      const data = await res.json();
+      console.log("Enviando al servidor:", routineData);
 
-    onRoutineAdded(data);
+      const res = await fetch("http://localhost:4000/routines", {
+        method: "POST",
+        headers: { 
+          "Content-Type": "application/json",
+          "Authorization": "Bearer " + token
+        },
+        body: JSON.stringify(routineData)
+      });
 
-    setNombre("");
-    setDescripcion("");
-    setDuracion("");
-    setNivel("");
-    setEjercicios("");
-    setImg("");
+      const responseData = await res.json();
+      
+      if (!res.ok) {
+        throw new Error(responseData.error || "Error al crear rutina");
+      }
 
+      setSuccess("Rutina creada exitosamente: " + responseData.nombre);
+      
+      // Limpiar formulario
+      setFormData({
+        nombre: "",
+        descripcion: "",
+        duracion: "",
+        nivel: "",
+        ejercicios: "",
+        img: ""
+      });
 
-     alert(`Rutina "${data.nombre}" agregada con éxito`);
+      setTimeout(function() {
+        navigate("/trainer/dashboard");
+      }, 2000);
+
     } catch (error) {
-      console.error(error);
-      alert("Error al agregar rutina");
+      console.error("Error:", error);
+      setError("Error: " + error.message);
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div>
-        <Card className="m-4 w-75">
-      <Card.Body>
-        <Form onSubmit={handleAddRoutine}>
-          <Row>
-            <Col md={6}>
-              <Form.Group className="mb-3" controlId="nombre">
-                <Form.Label>Nombre</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Nombre de la rutina"
-                  value={nombre}
-                  onChange={(e) => setNombre(e.target.value)}
-                  required
-                />
-              </Form.Group>
-            </Col>
-            <Col md={6}>
-              <Form.Group className="mb-3" controlId="nivel">
-                <Form.Label>Nivel</Form.Label>
-                <Form.Select value={nivel} onChange={(e) => setNivel(e.target.value)} required>
-                  <option value="">Seleccionar nivel</option>
-                  <option value="principiante">Principiante</option>
-                  <option value="intermedio">Intermedio</option>
-                  <option value="avanzado">Avanzado</option>
-                </Form.Select>
-              </Form.Group>
-            </Col>
-          </Row>
+    <div className="d-flex justify-content-center">
+      <Card className="m-4 w-75">
+        <Card.Body>
+          <h2 className="text-center mb-4">Crear Nueva Rutina</h2>
+          
+          {error && <Alert variant="danger">{error}</Alert>}
+          {success && <Alert variant="success">{success}</Alert>}
 
-          <Row>
-            <Col md={6}>
-              <Form.Group className="mb-3" controlId="duracion">
-                <Form.Label>Duración (min)</Form.Label>
-                <Form.Control
-                  type="number"
-                  placeholder="Duración en minutos"
-                  value={duracion}
-                  onChange={(e) => setDuracion(e.target.value)}
-                />
-              </Form.Group>
-            </Col>
-            <Col md={6}>
-              <Form.Group className="mb-3" controlId="img">
-                <Form.Label>Imagen</Form.Label>
-                <Form.Control
-                  type="text"
-                  placeholder="Nombre de imagen (ej: pecho.png)"
-                  value={img}
-                  onChange={(e) => setImg(e.target.value)}
-                />
-              </Form.Group>
-            </Col>
-          </Row>
+          <Form onSubmit={handleAddRoutine}>
+            <Row>
+              <Col md={6}>
+                <Form.Group className="mb-3" controlId="nombre">
+                  <Form.Label>Nombre *</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="nombre"
+                    placeholder="Nombre de la rutina"
+                    value={formData.nombre}
+                    onChange={handleChange}
+                    required
+                    disabled={loading}
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={6}>
+                <Form.Group className="mb-3" controlId="nivel">
+                  <Form.Label>Nivel *</Form.Label>
+                  <Form.Select 
+                    name="nivel" 
+                    value={formData.nivel} 
+                    onChange={handleChange} 
+                    required
+                    disabled={loading}
+                  >
+                    <option value="">Seleccionar nivel</option>
+                    <option value="principiante">Principiante</option>
+                    <option value="intermedio">Intermedio</option>
+                    <option value="avanzado">Avanzado</option>
+                  </Form.Select>
+                </Form.Group>
+              </Col>
+            </Row>
 
-          <Form.Group className="mb-3" controlId="descripcion">
-            <Form.Label>Descripción</Form.Label>
-            <Form.Control
-              as="textarea"
-              placeholder="Descripción"
-              value={descripcion}
-              onChange={(e) => setDescripcion(e.target.value)}
-            />
-          </Form.Group>
+            <Form.Group className="mb-3" controlId="ejercicios">
+              <Form.Label>Ejercicios *</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={3}
+                name="ejercicios"
+                placeholder="Ejercicios: Flexiones, Sentadillas, Abdominales..."
+                value={formData.ejercicios}
+                onChange={handleChange}
+                required
+                disabled={loading}
+              />
+            </Form.Group>
 
-          <Form.Group className="mb-3" controlId="ejercicios">
-            <Form.Label>Ejercicios</Form.Label>
-            <Form.Control
-              as="textarea"
-              placeholder="Lista de ejercicios"
-              value={ejercicios}
-              onChange={(e) => setEjercicios(e.target.value)}
-            />
-          </Form.Group>
+            <Form.Group className="mb-3" controlId="descripcion">
+              <Form.Label>Descripción</Form.Label>
+              <Form.Control
+                as="textarea"
+                rows={2}
+                name="descripcion"
+                placeholder="Descripción de la rutina..."
+                value={formData.descripcion}
+                onChange={handleChange}
+                disabled={loading}
+              />
+            </Form.Group>
 
-          <Button variant="primary" type="submit">
-            Agregar Rutina
-          </Button>
-          <Button variant="secondary" onClick={() => navigate("/")}>
-            Volver
-          </Button>
-        </Form>
-      </Card.Body>
-      
-    </Card>
+            <Row>
+              <Col md={6}>
+                <Form.Group className="mb-3" controlId="duracion">
+                  <Form.Label>Duración (minutos)</Form.Label>
+                  <Form.Control
+                    type="number"
+                    name="duracion"
+                    placeholder="30"
+                    value={formData.duracion}
+                    onChange={handleChange}
+                    disabled={loading}
+                  />
+                </Form.Group>
+              </Col>
+              <Col md={6}>
+                <Form.Group className="mb-3" controlId="img">
+                  <Form.Label>Imagen (URL)</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="img"
+                    placeholder="http://ejemplo.com/imagen.jpg"
+                    value={formData.img}
+                    onChange={handleChange}
+                    disabled={loading}
+                  />
+                </Form.Group>
+              </Col>
+            </Row>
+
+            <div className="d-flex gap-2">
+              <Button 
+                variant="primary" 
+                type="submit" 
+                disabled={loading}
+              >
+                {loading ? (
+                  <>
+                    <Spinner animation="border" size="sm" className="me-2" />
+                    Creando...
+                  </>
+                ) : (
+                  "Crear Rutina"
+                )}
+              </Button>
+              <Button 
+                variant="secondary" 
+                onClick={function() { navigate("/trainer/dashboard"); }}
+                disabled={loading}
+              >
+                Cancelar
+              </Button>
+            </div>
+          </Form>
+        </Card.Body>
+      </Card>
     </div>
   );
 };
