@@ -1,30 +1,13 @@
-
 import React, { useContext } from "react";
 import { Card, Row, Col, Button } from "react-bootstrap";
 import Routines from "../../routines/Routines";
 import { UserContext } from "../../../context/UserContext.jsx";
 import { CartContext } from "../../../context/CartContext.jsx";
 import { FaShoppingCart } from "react-icons/fa";
-
+import { Container } from "react-bootstrap";
 
 const UserDashboard = () => {
   const { user } = useContext(UserContext);
-  const { cart, addToCart, clearCart } = useContext(CartContext);
-
-import React, { useContext } from 'react'
-import { UserContext } from '../../../context/UserContext';
-import { Container } from 'react-bootstrap';
-
-const UserDashboard = () => {
-  const {user} = useContext(UserContext); 
-  return (
-    <Container className="text-center py-4">
-      <p>Hola {user ? user.email : "Alumno"} pidele a tu entrenador que te agregue rutinas!</p>
-    </Container>
-
-  )
-};
-
 
   const handleAdquireRoutine = (rutina) => {
     addToCart(rutina);
@@ -35,17 +18,24 @@ const UserDashboard = () => {
 
   return (
     <div className="container mt-4">
-  <div className="d-flex justify-content-between align-items-center">
-    <h1>Bienvenido, {user?.name || "Alumno"}</h1>
-    <div className="d-flex align-items-center">
-      <FaShoppingCart size={28} />
-      <span className="badge bg-warning text-dark" style={{ marginLeft: "2px" }}>
-        {cart.length}
-      </span>
-    </div>
-  </div>
-
-
+      <Container className="text-center py-4">
+        <p>
+          Hola {user ? user.email : "Alumno"} pidele a tu entrenador que te
+          agregue rutinas!
+        </p>
+      </Container>
+      <div className="d-flex justify-content-between align-items-center">
+        <h1>Bienvenido, {user?.name || "Alumno"}</h1>
+        <div className="d-flex align-items-center">
+          <FaShoppingCart size={28} />
+          <span
+            className="badge bg-warning text-dark"
+            style={{ marginLeft: "2px" }}
+          >
+            {cart.length}
+          </span>
+        </div>
+      </div>
 
       <Row>
         {Routines.map((rutina) => (
@@ -54,7 +44,9 @@ const UserDashboard = () => {
               <Card.Img variant="top" src={rutina.img} />
               <Card.Body>
                 <Card.Title>{rutina.name}</Card.Title>
-                <Card.Subtitle className="mb-2 text-muted">{rutina.days}</Card.Subtitle>
+                <Card.Subtitle className="mb-2 text-muted">
+                  {rutina.days}
+                </Card.Subtitle>
                 <Card.Text>{rutina.description}</Card.Text>
                 <Card.Text>Precio: ${rutina.price}</Card.Text>
                 <Button
@@ -72,7 +64,9 @@ const UserDashboard = () => {
 
       {/* Vista del carrito */}
       <div className="mt-4">
-        <h3>Carrito de {user?.name || "Alumno"} ({cart.length})</h3>
+        <h3>
+          Carrito de {user?.name || "Alumno"} ({cart.length})
+        </h3>
         {cart.length === 0 ? (
           <p>El carrito está vacío 🛒</p>
         ) : (
@@ -81,7 +75,11 @@ const UserDashboard = () => {
               {cart.map((rutina) => (
                 <Col key={rutina.id} md={4} className="mb-4">
                   <Card>
-                    <Card.Img variant="top" src={rutina.img} alt={rutina.name} />
+                    <Card.Img
+                      variant="top"
+                      src={rutina.img}
+                      alt={rutina.name}
+                    />
                     <Card.Body>
                       <Card.Title>{rutina.name}</Card.Title>
                       <Card.Text>{rutina.description}</Card.Text>
@@ -103,5 +101,4 @@ const UserDashboard = () => {
     </div>
   );
 };
-
 export default UserDashboard;
