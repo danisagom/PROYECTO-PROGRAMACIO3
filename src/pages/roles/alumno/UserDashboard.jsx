@@ -9,6 +9,8 @@ import { Container } from "react-bootstrap";
 const UserDashboard = () => {
   const { user } = useContext(UserContext);
 
+  const { cart, addToCart, clearCart } = useContext(CartContext);
+
   const handleAdquireRoutine = (rutina) => {
     addToCart(rutina);
     alert(`Rutina "${rutina.name}" agregada al carrito.`);
