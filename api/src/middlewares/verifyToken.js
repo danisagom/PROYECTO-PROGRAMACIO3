@@ -1,18 +1,18 @@
-import jwt from "jsonwebtoken";
+import jwt from 'jsonwebtoken';
 
-export const verifyToken = async (req, res, next) => {
-  const header = req.header("authorization") || "";
-  const token = header.split(" ")[1];
-  if (!token)
-    return res.status(400).send({ message: "No posee autorizacion requerida" });
+export const verifyToken = (req, res, next) => {
+  const token = req.headers.authorization?.split(' ')[1];
+  
+  if (!token) {
+    return res.status(401).json({ message: 'Token no proporcionado' });
+  }
 
   try {
-    const payload = jwt.verify(token, "secret_key_594783");
-    const user = await Users.findByPk(payload.id);
-    if (!user) return res.status(404).json({ error: "Usuario no encontrado" });
-    req.user = user;
+    const secretKey = "secret_key_594783";
+    const decoded = jwt.verify(token, secretKey);
+    req.user = decoded;
     next();
   } catch (error) {
-    res.status(403).json({ error: "Token invalido o expirado" });
+    return res.status(403).json({ message: 'Token inválido' });
   }
 };

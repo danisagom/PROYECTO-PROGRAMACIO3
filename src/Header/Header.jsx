@@ -18,7 +18,9 @@ function Header() {
   };
 
   return (
+   
     <div className="bg-dark text-white p-4 text-center">
+
       <h1>
         <Link to="/">
           <button
@@ -77,12 +79,13 @@ function Header() {
               Bienvenido, <strong>{user.email}</strong>
             </span>
 
-            {/* Botón para agregar rutina */}
-            <Link to="/new-routine">
-              <Button variant="success" className="me-2">
-                Agregar Rutina
-              </Button>
-            </Link>
+            {(user.role === "trainer") && (
+              <Link to= "/new-routine">
+                <Button variant="warning" className="me-2">
+                  Asignar Rutina
+                </Button>
+              </Link>
+            )}
 
             {/* Botón de cerrar sesión */}
             <Button variant="danger" onClick={handleLogout}>

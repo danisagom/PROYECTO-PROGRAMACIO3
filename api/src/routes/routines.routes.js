@@ -1,5 +1,5 @@
 import express from "express";
-import Routines from "../model/Routines.js"; // sube un nivel desde routes a model
+import Routines from "../models/Routines.js"; // sube un nivel desde routes a model
 import {
   deleteRoutine,
   getAllRoutines,

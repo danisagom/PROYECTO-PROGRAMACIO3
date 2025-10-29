@@ -1,9 +1,11 @@
 import React from 'react'
 
 const TrainerDashboard = () => {
+  const userName = JSON.parse(localStorage.getItem("currentUser"))?.email || "Profesor";
+
   return (
     <div>
-      <p>hola profe</p>
+      <p>Hola {userName}</p>
     </div>
   )
 }

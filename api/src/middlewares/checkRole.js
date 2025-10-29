@@ -1,15 +1,11 @@
-export const checkRole = (requiredRole) => {
+export const checkRole = (allowedRoles) => {
   return (req, res, next) => {
-    if (!req.user) {
-      return res.status(401).json({ error: "Usuario no autenticado" });
+    const userRole = req.user?.role;
+    
+    if (!userRole || !allowedRoles.includes(userRole)) {
+      return res.status(403).json({ message: 'Acceso denegado' });
     }
-
-    if (!requiredRole.includes(req.user.role)) {
-      return res
-        .status(403)
-        .json({ error: "No tenés permisos para acceder a esta ruta" });
-    }
-
+    
     next();
   };
 };
