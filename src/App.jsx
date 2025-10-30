@@ -1,12 +1,11 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
-
 import Header from "./Header/Header.jsx";
 import Footer from "./Footer/Footer.jsx";
 import Main from "./Main/Main.jsx";
 import Dashboard from "./pages/dashboard/Dashboard.jsx";
-import About from './Footer/About.jsx';
+import About from "./Footer/About.jsx";
 import Routines from "./pages/routines/Routines.jsx";
 import Login from "./components/auth/login/Login.jsx";
 import Register from "./components/auth/register/Register.jsx";
@@ -14,13 +13,12 @@ import Profile from "./Profile/Profile.jsx";
 import NewRoutine from "./pages/newRoutine/NewRoutine.jsx";
 import NotFound from "./components/ui/NotFound.jsx";
 import Polity from "./Footer/Polity.jsx";
-
 import UserDashboard from "./pages/roles/alumno/UserDashboard.jsx";
 import TrainerDashboard from "./pages/roles/Profesores/TrainerDashboard.jsx";
 import AdminDashboard from "./pages/roles/Administrativo/AdminDashboard.jsx";
-
 import { UserProvider } from "./context/UserContext.jsx";
 import { CartProvider } from "./context/CartContext.jsx";
+import Protected from "./components/protected/Protected.jsx";
 
 function App() {
   return (
@@ -35,14 +33,42 @@ function App() {
               <Route path="/register" element={<Register />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/routines" element={<Routines />} />
-              <Route path="/new-routine" element={<NewRoutine onRoutineAdded={(r) => console.log(r)} />} />
+              <Route
+                path="/new-routine"
+                element={
+                  <Protected roles={["trainer"]}>
+                    <NewRoutine onRoutineAdded={(r) => console.log(r)} />
+                  </Protected>
+                }
+              />
               <Route path="/profile" element={<Profile />} />
               <Route path="/about" element={<About />} />
               <Route path="/privacy" element={<Polity />} />
               <Route path="*" element={<NotFound />} />
-              <Route path="/alumno/dashboard" element={<UserDashboard />} />
-              <Route path="/profesores/dashboard" element={<TrainerDashboard />} />
-              <Route path="/administrativo/dashboard" element={<AdminDashboard />} />
+              <Route
+                path="/alumno/dashboard"
+                element={
+                  <Protected roles={["user"]}>
+                    <UserDashboard />
+                  </Protected>
+                }
+              />
+              <Route
+                path="/profesores/dashboard"
+                element={
+                  <Protected roles={["trainer"]}>
+                    <TrainerDashboard />
+                  </Protected>
+                }
+              />
+              <Route
+                path="/administrativo/dashboard"
+                element={
+                  <Protected roles={["admin"]}>
+                    <AdminDashboard />
+                  </Protected>
+                }
+              />
             </Routes>
             <Footer />
           </div>

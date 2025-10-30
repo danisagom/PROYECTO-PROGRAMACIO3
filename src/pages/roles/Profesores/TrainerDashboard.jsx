@@ -1,7 +1,15 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Container, Card, Row, Col, Button, Table, Badge } from 'react-bootstrap';
-import { Link } from 'react-router-dom';
-import { UserContext } from '../../../context/UserContext';
+import React, { useState, useEffect, useContext } from "react";
+import {
+  Container,
+  Card,
+  Row,
+  Col,
+  Button,
+  Table,
+  Badge,
+} from "react-bootstrap";
+import { Link } from "react-router-dom";
+import { UserContext } from "../../../context/UserContext";
 
 const TrainerDashboard = () => {
   const { user } = useContext(UserContext);
@@ -14,47 +22,55 @@ const TrainerDashboard = () => {
 
   const fetchMyRoutines = async () => {
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('http://localhost:4000/routines', {
+      const token = localStorage.getItem("token");
+      const response = await fetch("http://localhost:4000/routines", {
         headers: {
-          'Authorization': `Bearer ${token}`
-        }
+          Authorization: `Bearer ${token}`,
+        },
       });
-      
+
       if (response.ok) {
         const allRoutines = await response.json();
         // Filtrar rutinas creadas por el entrenador (aquí asumimos que el trainer ve todas)
         setMyRoutines(allRoutines);
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     } finally {
       setLoading(false);
     }
   };
 
   const handleDeleteRoutine = async (routineId) => {
-    if (!confirm('¿Estás seguro de eliminar esta rutina?')) return;
+    if (!confirm("¿Estás seguro de eliminar esta rutina?")) return;
 
     try {
-      const token = localStorage.getItem('token');
-      const response = await fetch(`http://localhost:4000/routines/${routineId}`, {
-        method: 'DELETE',
-        headers: {
-          'Authorization': `Bearer ${token}`
+      const token = localStorage.getItem("token");
+      const response = await fetch(
+        `http://localhost:4000/routines/${routineId}`,
+        {
+          method: "DELETE",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      });
+      );
 
       if (response.ok) {
-        alert('Rutina eliminada correctamente');
+        alert("Rutina eliminada correctamente");
         fetchMyRoutines();
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error("Error:", error);
     }
   };
 
-  if (loading) return <Container className="py-4"><p>Cargando tus rutinas...</p></Container>;
+  if (loading)
+    return (
+      <Container className="py-4">
+        <p>Cargando tus rutinas...</p>
+      </Container>
+    );
 
   return (
     <Container className="py-4">
@@ -63,7 +79,9 @@ const TrainerDashboard = () => {
           <div className="d-flex justify-content-between align-items-center mb-4">
             <div>
               <h1>Panel de Entrenador</h1>
-              <p className="text-muted">Hola {user?.email}, gestiona tus rutinas aquí</p>
+              <p className="text-muted">
+                Hola {user?.email}, gestiona tus rutinas aquí
+              </p>
             </div>
             <Link to="/new-routine">
               <Button variant="success" size="lg">
@@ -78,7 +96,9 @@ const TrainerDashboard = () => {
         <Col md={8}>
           <Card>
             <Card.Header>
-              <h4 className="mb-0">Mis Rutinas Creadas ({myRoutines.length})</h4>
+              <h4 className="mb-0">
+                Mis Rutinas Creadas ({myRoutines.length})
+              </h4>
             </Card.Header>
             <Card.Body>
               {myRoutines.length === 0 ? (
@@ -100,28 +120,37 @@ const TrainerDashboard = () => {
                     </tr>
                   </thead>
                   <tbody>
-                    {myRoutines.map(routine => (
+                    {myRoutines.map((routine) => (
                       <tr key={routine.id}>
                         <td>
                           <strong>{routine.nombre}</strong>
                           <br />
-                          <small className="text-muted">{routine.descripcion}</small>
+                          <small className="text-muted">
+                            {routine.descripcion}
+                          </small>
                         </td>
                         <td>
-                          <Badge bg={
-                            routine.nivel === 'principiante' ? 'success' :
-                            routine.nivel === 'intermedio' ? 'warning' : 'danger'
-                          }>
+                          <Badge
+                            bg={
+                              routine.nivel === "principiante"
+                                ? "success"
+                                : routine.nivel === "intermedio"
+                                ? "warning"
+                                : "danger"
+                            }
+                          >
                             {routine.nivel}
                           </Badge>
                         </td>
                         <td>{routine.duracion} min</td>
                         <td>
-                          <small>{routine.ejercicios?.substring(0, 50)}...</small>
+                          <small>
+                            {routine.ejercicios?.substring(0, 50)}...
+                          </small>
                         </td>
                         <td>
-                          <Button 
-                            variant="outline-danger" 
+                          <Button
+                            variant="outline-danger"
                             size="sm"
                             onClick={() => handleDeleteRoutine(routine.id)}
                           >
@@ -149,7 +178,8 @@ const TrainerDashboard = () => {
               </div>
               <div className="mt-3">
                 <small className="text-muted">
-                  Puedes crear, editar y eliminar rutinas para los usuarios del gimnasio.
+                  Puedes crear, editar y eliminar rutinas para los usuarios del
+                  gimnasio.
                 </small>
               </div>
             </Card.Body>
