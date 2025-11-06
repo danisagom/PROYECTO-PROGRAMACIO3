@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faHouse, faDumbbell, faUser } from "@fortawesome/free-solid-svg-icons";
+import { faHouse, faDumbbell, faUser, faTachometerAlt } from "@fortawesome/free-solid-svg-icons";
 import { Button } from "react-bootstrap";
 import { Link, useNavigate } from "react-router-dom";
 import { UserContext } from "../context/UserContext";
@@ -18,9 +18,7 @@ function Header() {
   };
 
   return (
-   
     <div className="bg-dark text-white p-4 text-center">
-
       <h1>
         <Link to="/">
           <button
@@ -79,10 +77,41 @@ function Header() {
               Bienvenido, <strong>{user.email}</strong>
             </span>
 
+            {/* BOTONES ESPECÍFICOS PARA ENTRENADORES */}
             {(user.role === "trainer") && (
-              <Link to= "/new-routine">
-                <Button variant="warning" className="me-2">
-                  Crear rutinas 
+              <>
+                <Link to="/profesores/dashboard">
+                  <Button variant="info" className="me-2">
+                    <FontAwesomeIcon icon={faTachometerAlt} className="me-1" />
+                    Mi Panel
+                  </Button>
+                </Link>
+
+                <Link to="/new-routine">
+                  <Button variant="warning" className="me-2">
+                    <FontAwesomeIcon icon={faDumbbell} className="me-1" />
+                    Crear Rutina
+                  </Button>
+                </Link>
+              </>
+            )}
+
+            {/* BOTÓN PARA ADMIN */}
+            {(user.role === "admin") && (
+              <Link to="/administrativo/dashboard">
+                <Button variant="info" className="me-2">
+                  <FontAwesomeIcon icon={faTachometerAlt} className="me-1" />
+                  Panel Admin
+                </Button>
+              </Link>
+            )}
+
+            {/* BOTÓN PARA USUARIOS COMUNES */}
+            {(user.role === "user") && (
+              <Link to="/alumno/dashboard">
+                <Button variant="info" className="me-2">
+                  <FontAwesomeIcon icon={faTachometerAlt} className="me-1" />
+                  Mi Panel
                 </Button>
               </Link>
             )}

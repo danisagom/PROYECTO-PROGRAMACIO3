@@ -81,7 +81,7 @@ const NewRoutine = () => {
       });
 
       setTimeout(function() {
-        navigate("/trainer/dashboard");
+        navigate("/profesores/dashboard");
       }, 2000);
 
     } catch (error) {

@@ -3,12 +3,10 @@ import { Button, Form, Card } from 'react-bootstrap';
 import { Link, useNavigate } from 'react-router-dom';
 import ValidationsLogin from "../validationsLogin.jsx";
 
-
 const Register = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [role, setRole] = useState("user");
   const [errores, setErrores] = useState({});
   const navigate = useNavigate();
 
@@ -22,7 +20,7 @@ const Register = () => {
       return;
     }
 
-    setErrores({}); //  limpia errores
+    setErrores({}); // limpia errores
 
     try {
       const response = await fetch("http://localhost:4000/auth/register", {
@@ -30,11 +28,15 @@ const Register = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password, role }),
+        body: JSON.stringify({ 
+          email, 
+          password, 
+          role: "user" // ← SIEMPRE se registra como "user"
+        }),
       });
 
       if (response.ok) {
-        alert(`Registro exitoso como ${role}. Ahora podés iniciar sesión`);
+        alert('Registro exitoso. Ahora podés iniciar sesión');
         navigate("/login");
       } else {
         const errorData = await response.json();
@@ -90,20 +92,10 @@ const Register = () => {
             {errores.confirmPassword && <p style={{ color: "red" }}>{errores.confirmPassword}</p>}
           </Form.Group>
 
-          <Form.Group controlId="formRole" className="mb-3">
-            <Form.Label>Rol</Form.Label>
-            <Form.Select
-              value={role}
-              onChange={(e) => setRole(e.target.value)}
-            >
-              <option value="user">Alumno</option>
-              <option value="trainer">Entrenador</option>
-              <option value="admin">Administrador</option>
-            </Form.Select>
-          </Form.Group>
+          {/* QUITADO el selector de roles */}
 
           <Button variant="success" type="submit" className="w-100">
-            Registrarse
+            Registrarse como Usuario
           </Button>
         </Form>
 
