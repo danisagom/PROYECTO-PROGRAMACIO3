@@ -46,6 +46,12 @@ const TrainerDashboard = () => {
 
     try {
       const token = localStorage.getItem("token");
+
+      // LOGS TEMPORALES:
+    console.log("=== 🚨 DEBUG FRONTEND 🚨 ===");
+    console.log("🔐 Token desde localStorage:", token ? "✅ EXISTE" : "❌ NO EXISTE");
+    console.log("🗑️ Rutina a eliminar ID:", routineId);
+
       const response = await fetch(
         `http://localhost:4000/routines/${routineId}`,
         {

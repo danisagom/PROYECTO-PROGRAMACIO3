@@ -27,6 +27,6 @@ router.post("/", verifyToken, checkRole(["admin", "trainer"]), postRoutine);
 router.put("/:id", verifyToken, checkRole(["admin", "trainer"]), putRoutine);
 
 // Eliminar rutina
-router.delete("/:id", verifyToken, checkRole(["admin"]), deleteRoutine);
+router.delete("/:id", verifyToken, checkRole(["admin", "trainer"]), deleteRoutine);
 
 export default router;
