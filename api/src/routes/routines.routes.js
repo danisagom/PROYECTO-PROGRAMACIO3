@@ -1,5 +1,4 @@
 import express from "express";
-import Routines from "../models/Routines.js"; // sube un nivel desde routes a model
 import {
   deleteRoutine,
   getAllRoutines,
@@ -12,28 +11,22 @@ import { checkRole } from "../middlewares/checkRole.js";
 
 const router = express.Router();
 
-
+// Rutas públicas para ver todas las rutinas
 router.get("/public", getAllRoutines);
 
-//todas las rutinas
-router.get(
-  "/",
-  verifyToken,
-  checkRole(["admin", "trainer", "user"]),
-  getAllRoutines
-);
-//rutina por id
-router.get(
-  "/:id",
-  verifyToken,
-  checkRole(["admin", "trainer", "user"]),
-  getRoutineById
-);
-//eliminar rutina
-router.delete("/:id", verifyToken, checkRole(["admin"]), deleteRoutine);
-//actualizar rutina
-router.put("/:id", verifyToken, checkRole(["admin", "trainer"]), putRoutine);
-//nueva rutina
+// Todas las rutinas (según rol)
+router.get("/", verifyToken, checkRole(["admin", "trainer", "user"]), getAllRoutines);
+
+// Rutina por ID
+router.get("/:id", verifyToken, checkRole(["admin", "trainer", "user"]), getRoutineById);
+
+// Crear nueva rutina
 router.post("/", verifyToken, checkRole(["admin", "trainer"]), postRoutine);
+
+// Actualizar rutina
+router.put("/:id", verifyToken, checkRole(["admin", "trainer"]), putRoutine);
+
+// Eliminar rutina
+router.delete("/:id", verifyToken, checkRole(["admin"]), deleteRoutine);
 
 export default router;
