@@ -96,15 +96,7 @@ function Main() {
                       </Button>
                     </Link>
                   )}
-                  {user?.isLoggedIn && (
-                    <Button
-                      variant="danger"
-                      className="mt-2"
-                      onClick={() => handleDeleteRoutine(r.id)}
-                    >
-                      Eliminar
-                    </Button>
-                  )}
+                  
                 </Card.Body>
               </Card>
             </Col>
@@ -113,5 +105,5 @@ function Main() {
     </div>
   );
 }
-
+  
 export default Main;
