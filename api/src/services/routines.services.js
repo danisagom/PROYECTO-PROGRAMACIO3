@@ -1,111 +1,113 @@
-import Routines from "../models/Routines.js";
+import { Routines } from '../models/index.js';
 
+// Todas las rutinas
 export const getAllRoutines = async (req, res) => {
   try {
-    const routines = await Routines.findAll();
+    let routines;
+
+    // Verificar si es una ruta pública (sin autenticación)
+    if (!req.user) {
+      // Acceso público - mostrar todas las rutinas
+      console.log("🌐 Acceso público - mostrando todas las rutinas");
+      routines = await Routines.findAll({
+        order: [['createdAt', 'DESC']]
+      });
+    } 
+    // Verificar si el usuario está autenticado y es trainer
+    else if (req.user.role === "trainer") {
+      // Trainer solo ve SUS rutinas
+      console.log(`👤 Entrenador ${req.user.email} - mostrando SUS rutinas`);
+      routines = await Routines.findAll({ 
+        where: { userId: req.user.id }, // ← DESCOMENTADO - trainers ven solo sus rutinas
+        order: [['createdAt', 'DESC']]
+      });
+    } else {
+      // Admin y usuarios comunes ven todas
+      console.log(`👤 Usuario ${req.user.email} (${req.user.role}) - mostrando todas las rutinas`);
+      routines = await Routines.findAll({
+        order: [['createdAt', 'DESC']]
+      });
+    }
+
     res.json(routines);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("❌ Error en getAllRoutines:", error);
+    res.status(500).json({ message: "Error al obtener las rutinas" });
   }
 };
 
-export const getRoutineById = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const routine = await Routines.findByPk(id);
-    if (routine) {
-      res.json(routine);
-    } else {
-      res.status(404).json({ error: "Rutina no encontrada" });
-    }
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-};
-
+// Crear rutina
 export const postRoutine = async (req, res) => {
   try {
-    console.log("📝 POST /routines - Datos recibidos:", req.body);
-    console.log("👤 Usuario que hace la request:", req.user);
-
     const { nombre, descripcion, duracion, nivel, ejercicios, img } = req.body;
+    
+    console.log("📝 Creando rutina para usuario:", req.user.email, "ID:", req.user.id);
 
-    // Validaciones básicas
-    if (!nombre || !nombre.trim()) {
-      return res.status(400).json({ 
-        error: "El nombre de la rutina es obligatorio" 
-      });
-    }
-
-    if (!nivel) {
-      return res.status(400).json({ 
-        error: "El nivel es obligatorio" 
-      });
-    }
-
-    // Validar niveles permitidos
-    const nivelesPermitidos = ['principiante', 'intermedio', 'avanzado'];
-    if (!nivelesPermitidos.includes(nivel)) {
-      return res.status(400).json({ 
-        error: "Nivel debe ser: principiante, intermedio o avanzado" 
-      });
-    }
-
-    // Crear la rutina
     const newRoutine = await Routines.create({
-      nombre: nombre.trim(),
-      descripcion: descripcion ? descripcion.trim() : null,
+      nombre,
+      descripcion: descripcion || null,
       duracion: duracion ? parseInt(duracion) : null,
-      nivel: nivel,
-      ejercicios: ejercicios ? ejercicios.trim() : null,
-      img: img ? img.trim() : null,
+      nivel,
+      ejercicios: ejercicios || null,
+      img: img || null,
+      userId: req.user.id // ← DESCOMENTADO - enviar el userId
     });
 
-    console.log("✅ Rutina creada exitosamente");
-
+    console.log("✅ Rutina creada exitosamente:", newRoutine.nombre);
     res.status(201).json(newRoutine);
   } catch (error) {
-    console.error("❌ ERROR en postRoutine:", error);
-
-    // Manejar errores de Sequelize
-    if (error.name === 'SequelizeValidationError') {
-      const errors = error.errors.map(function(err) { 
-        return err.message; 
-      });
-      return res.status(400).json({ error: errors.join(', ') });
-    }
-
-    if (error.name === 'SequelizeUniqueConstraintError') {
-      return res.status(400).json({ error: "Ya existe una rutina con ese nombre" });
-    }
-
+    console.error("❌ Error en postRoutine:", error);
     res.status(500).json({ 
-      error: "Error interno del servidor",
-      details: error.message 
+      message: "Error al crear rutina",
+      error: error.message 
     });
   }
-}
+};
+
+// Los otros servicios se mantienen igual...
+export const getRoutineById = async (req, res) => {
+  try {
+    const routine = await Routines.findByPk(req.params.id);
+    if (!routine) {
+      return res.status(404).json({ message: "Rutina no encontrada" });
+    }
+    res.json(routine);
+  } catch (error) {
+    console.error("❌ Error en getRoutineById:", error);
+    res.status(500).json({ message: "Error al obtener rutina" });
+  }
+};
 
 export const putRoutine = async (req, res) => {
   try {
     const { id } = req.params;
-    const { nombre, descripcion, duracion, nivel, ejercicios, img } = req.body;
-    await Routines.update(
-      { nombre, descripcion, duracion, nivel, ejercicios, img },
-      { where: { id } }
-    );
-    res.status(200).json({ message: "Rutina actualizada" });
+    const routine = await Routines.findByPk(id);
+    
+    if (!routine) {
+      return res.status(404).json({ message: "Rutina no encontrada" });
+    }
+
+    await routine.update(req.body);
+    res.json(routine);
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("❌ Error en putRoutine:", error);
+    res.status(500).json({ message: "Error al actualizar rutina" });
   }
 };
 
 export const deleteRoutine = async (req, res) => {
   try {
     const { id } = req.params;
-    await Routines.destroy({ where: { id } });
-    res.status(204).send();
+    const routine = await Routines.findByPk(id);
+    
+    if (!routine) {
+      return res.status(404).json({ message: "Rutina no encontrada" });
+    }
+
+    await routine.destroy();
+    res.json({ message: "Rutina eliminada correctamente" });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    console.error("❌ Error en deleteRoutine:", error);
+    res.status(500).json({ message: "Error al eliminar rutina" });
   }
 };

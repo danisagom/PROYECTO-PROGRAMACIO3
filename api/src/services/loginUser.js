@@ -14,7 +14,7 @@ export const loginUser = async (req, res) => {
     return res.status(401).send({ message: "Email y/o contraseña incorrecta" });
 
   const secretKey = "secret_key_594783";
-  const token = jwt.sign({ email, role: user.role }, secretKey, { expiresIn: "1h" });
+  const token = jwt.sign({id:user.id, email, role: user.role }, secretKey, { expiresIn: "1h" });
 
   return res.json({ token, role: user.role });
 };

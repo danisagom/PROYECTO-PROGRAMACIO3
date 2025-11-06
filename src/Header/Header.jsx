@@ -82,7 +82,7 @@ function Header() {
             {(user.role === "trainer") && (
               <Link to= "/new-routine">
                 <Button variant="warning" className="me-2">
-                  Asignar Rutina
+                  Crear rutinas 
                 </Button>
               </Link>
             )}
