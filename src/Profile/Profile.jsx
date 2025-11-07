@@ -59,40 +59,7 @@ const Profile = () => {
         </Card.Body>
       </Card>
 
-      <Card>
-        <Card.Header>
-          <h4>
-            <FontAwesomeIcon icon={faDumbbell} className="me-2" />
-            Mis Rutinas ({routines.length})
-          </h4>
-        </Card.Header>
-        <Card.Body>
-          {routines.length === 0 ? (
-            <div className="text-center py-4">
-              <p>No tienes rutinas todavía</p>
-              <Button variant="primary" href="/new-routine">
-                Crear mi primera rutina
-              </Button>
-            </div>
-          ) : (
-            <div className="row">
-              {routines.map(routine => (
-                <div key={routine.id} className="col-md-6 mb-3">
-                  <Card>
-                    <Card.Body>
-                      <h5>{routine.name}</h5>
-                      <p className="text-muted">{routine.description}</p>
-                      <Button variant="outline-primary" size="sm">
-                        Ver rutina
-                      </Button>
-                    </Card.Body>
-                  </Card>
-                </div>
-              ))}
-            </div>
-          )}
-        </Card.Body>
-      </Card>
+      
     </Container>
   );
 };
