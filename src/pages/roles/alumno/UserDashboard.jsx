@@ -1,33 +1,43 @@
 import React, { useContext, useState, useEffect } from "react";
-import { Card, Row, Col, Button, Container, Badge, Alert, Spinner } from "react-bootstrap";
+import {
+  Card,
+  Row,
+  Col,
+  Button,
+  Container,
+  Badge,
+  Alert,
+  Spinner,
+} from "react-bootstrap";
 import { UserContext } from "../../../context/UserContext.jsx";
 import { CartContext } from "../../../context/CartContext.jsx";
 import { FaShoppingCart } from "react-icons/fa";
 
 const UserDashboard = () => {
   const { user } = useContext(UserContext);
-  const { cart, addToCart, removeFromCart, clearCart } = useContext(CartContext);
+  const [cart, setCart] = useState([]);
   const [routines, setRoutines] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
 
   useEffect(() => {
     fetchRoutines();
+    fetchCart();
   }, []);
 
   const fetchRoutines = async () => {
     try {
       console.log("🔄 Cargando rutinas desde la API...");
-      
+
       const response = await fetch("http://localhost:4000/routines/public");
-      
+
       if (!response.ok) {
         throw new Error(`Error ${response.status}: ${response.statusText}`);
       }
-      
+
       const data = await response.json();
       console.log("✅ Rutinas cargadas:", data);
-      
+
       setRoutines(data);
       setError("");
     } catch (error) {
@@ -38,10 +48,59 @@ const UserDashboard = () => {
       setLoading(false);
     }
   };
+  const fetchCart = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch("http://localhost:4000/cart", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
 
-  const handleAdquireRoutine = (rutina) => {
-    addToCart(rutina);
-    alert(`Rutina "${rutina.nombre}" agregada al carrito.`);
+      const data = await response.json();
+      setCart(data);
+    } catch (error) {
+      console.error("Error cargando carrito:", error);
+    }
+  };
+
+  const handleAdquireRoutine = async (rutina) => {
+    try {
+      const token = localStorage.getItem("token");
+
+      const response = await fetch("http://localhost:4000/cart", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          routineId: rutina.id,
+          cantidad: 1,
+        }),
+      });
+      if (!response.ok) throw new Error("No se pudo agregar al carrito");
+      alert(`Rutina "${rutina.nombre}" agregada al carrito.`);
+      fetchCart(); // ✅ Actualiza el carrito desde la BD
+    } catch (error) {
+      alert("Error: " + error.message);
+    }
+  };
+  const removeItem = async (id) => {
+    const token = localStorage.getItem("token");
+    await fetch(`http://localhost:4000/cart/${id}`, {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    fetchCart();
+  };
+  const clearCart = async () => {
+    const token = localStorage.getItem("token");
+    await fetch("http://localhost:4000/cart", {
+      method: "DELETE",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    fetchCart();
   };
 
   if (loading) {
@@ -59,15 +118,21 @@ const UserDashboard = () => {
     <Container className="mt-4">
       <Container className="text-center py-4">
         <p>
-          Hola {user ? user.email : "Alumno"} - ¡Explora nuestras rutinas disponibles!
+          Hola {user ? user.email : "Alumno"} - ¡Explora nuestras rutinas
+          disponibles!
         </p>
       </Container>
-      
+
       <div className="d-flex justify-content-between align-items-center mb-4">
         <h1>Bienvenido, {user?.email || "Alumno"}</h1>
         <div className="d-flex align-items-center">
           <FaShoppingCart size={28} />
-          <Badge bg="warning" text="dark" className="ms-2" style={{ fontSize: '1rem' }}>
+          <Badge
+            bg="warning"
+            text="dark"
+            className="ms-2"
+            style={{ fontSize: "1rem" }}
+          >
             {cart.length}
           </Badge>
         </div>
@@ -76,7 +141,12 @@ const UserDashboard = () => {
       {error && (
         <Alert variant="danger" className="mb-4">
           <strong>Error:</strong> {error}
-          <Button variant="outline-danger" size="sm" className="ms-2" onClick={fetchRoutines}>
+          <Button
+            variant="outline-danger"
+            size="sm"
+            className="ms-2"
+            onClick={fetchRoutines}
+          >
             Reintentar
           </Button>
         </Alert>
@@ -88,7 +158,9 @@ const UserDashboard = () => {
         {routines.length === 0 && !error ? (
           <div className="text-center py-5">
             <p className="fs-5">No hay rutinas disponibles</p>
-            <p className="text-muted">Pídele a tu entrenador que agregue rutinas</p>
+            <p className="text-muted">
+              Pídele a tu entrenador que agregue rutinas
+            </p>
           </div>
         ) : (
           <Row>
@@ -135,7 +207,9 @@ const UserDashboard = () => {
         {cart.length === 0 ? (
           <div className="text-center py-5">
             <p className="fs-5">El carrito está vacío 🛒</p>
-            <p className="text-muted">Agrega rutinas desde la lista de disponibles</p>
+            <p className="text-muted">
+              Agrega rutinas desde la lista de disponibles
+            </p>
           </div>
         ) : (
           <>
@@ -145,19 +219,19 @@ const UserDashboard = () => {
                   <Card className="h-100">
                     {rutina.img && <Card.Img variant="top" src={rutina.img} />}
                     <Card.Body className="d-flex flex-column">
-                      <Card.Title>{rutina.nombre}</Card.Title>
+                      <Card.Title>{rutina.routine?.nombre}</Card.Title>
                       <Card.Text className="flex-grow-1">
-                        {rutina.descripcion || "Sin descripción"}
+                        {rutina.routine?.descripcion || "Sin descripción"}
                       </Card.Text>
                       <div className="mt-auto">
                         <small className="text-muted">
-                          Nivel: {rutina.nivel}
+                          Nivel: {rutina.routine?.nivel}
                         </small>
                         <Button
                           variant="danger"
                           size="sm"
                           className="w-100 mt-2"
-                          onClick={() => removeFromCart(rutina.id)}
+                          onClick={() => removeItem(rutina.id)}
                         >
                           Quitar del Carrito
                         </Button>
