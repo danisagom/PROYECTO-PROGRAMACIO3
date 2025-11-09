@@ -6,7 +6,6 @@ export const CartProvider = ({ children }) => {
   const [cart, setCart] = useState([]);
 
   const addToCart = (item) => {
-    // Evitar duplicar
     if (!cart.find((rutina) => rutina.id === item.id)) {
       setCart((prevCart) => [...prevCart, item]);
     }

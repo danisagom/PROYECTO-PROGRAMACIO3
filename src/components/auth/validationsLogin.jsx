@@ -13,7 +13,6 @@ const ValidationsLogin = ({ email, password, confirmPassword }) => {
     errores.password = "Mínimo 8 caracteres, incluyendo letras y números";
   }
 
-  // Validación de confirmación de contraseña 
   if (confirmPassword !== undefined) {
     if (!confirmPassword.trim()) {
       errores.confirmPassword = "Confirmar contraseña es obligatorio";
